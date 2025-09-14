@@ -1,5 +1,5 @@
 import React from 'react';
-import { FileText, Mail, ArrowRight, Clock, CheckCircle, Users, Building2 } from 'lucide-react';
+import { FileText, Mail, ArrowRight, Clock, CheckCircle, Users, Building2, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -38,6 +38,22 @@ const Dashboard = () => {
       ],
       lastUsed: 'Never',
       totalProcessed: '0 emails sent'
+    },
+    {
+      id: 'pattern-discovery',
+      title: 'Smart Pattern Discovery',
+      description: 'Automatically discover and save patterns from PDF documents using AI analysis',
+      icon: Sparkles,
+      path: '/tools/pattern-discovery',
+      status: 'new',
+      features: [
+        'AI-powered pattern detection',
+        'Automatic field recognition',
+        'Pattern library management',
+        'Integration with PDF splitter'
+      ],
+      lastUsed: 'Never',
+      totalProcessed: 'New tool'
     }
   ];
 
@@ -68,6 +84,8 @@ const Dashboard = () => {
         return <Badge className="bg-green-100 text-green-700">Active</Badge>;
       case 'coming-soon':
         return <Badge className="bg-yellow-100 text-yellow-700">Coming Soon</Badge>;
+      case 'new':
+        return <Badge className="bg-blue-100 text-blue-700">New</Badge>;
       default:
         return null;
     }
@@ -207,7 +225,7 @@ const Dashboard = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid sm:grid-cols-2 gap-4">
+          <div className="grid sm:grid-cols-3 gap-4">
             <Button asChild variant="outline" className="h-auto p-4">
               <Link to="/tools/pdf-splitter" className="flex flex-col items-center gap-2">
                 <FileText className="h-6 w-6" />
@@ -223,6 +241,15 @@ const Dashboard = () => {
                 <div className="text-center">
                   <div className="font-medium">Send Customer Emails</div>
                   <div className="text-xs text-muted-foreground">Email with attachments</div>
+                </div>
+              </Link>
+            </Button>
+            <Button asChild variant="outline" className="h-auto p-4">
+              <Link to="/tools/pattern-discovery" className="flex flex-col items-center gap-2">
+                <Sparkles className="h-6 w-6" />
+                <div className="text-center">
+                  <div className="font-medium">Discover Patterns</div>
+                  <div className="text-xs text-muted-foreground">AI pattern analysis</div>
                 </div>
               </Link>
             </Button>

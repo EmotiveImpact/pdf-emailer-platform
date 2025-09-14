@@ -116,3 +116,4 @@ $RECYCLE.BIN/
 
 # Bun
 bun.lockb
+node_modules
