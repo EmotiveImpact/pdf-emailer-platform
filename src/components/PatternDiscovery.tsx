@@ -14,7 +14,7 @@ import * as pdfjsLib from 'pdfjs-dist';
 pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js';
 
 interface DiscoveredPattern {
-  type: 'account' | 'name' | 'address' | 'date' | 'currency';
+  type: 'account' | 'name' | 'address' | 'date' | 'currency' | 'field_label';
   pattern: string;
   description: string;
   examples: string[];
@@ -226,6 +226,8 @@ export default function PatternDiscovery() {
     if (!analysisResult || selectedPatterns.size === 0) return;
 
     let savedCount = 0;
+    let skippedCount = 0;
+
     selectedPatterns.forEach(index => {
       const pattern = analysisResult.patterns[index];
       if (pattern.type === 'account') {
@@ -234,13 +236,26 @@ export default function PatternDiscovery() {
       } else if (pattern.type === 'name') {
         addNamePattern(pattern.pattern);
         savedCount++;
+      } else {
+        skippedCount++;
       }
     });
 
-    toast({
-      title: "Patterns Saved",
-      description: `${savedCount} patterns added to your pattern library`,
-    });
+    const message = savedCount > 0
+      ? `${savedCount} patterns added to your pattern library`
+      : "No saveable patterns selected";
+
+    if (skippedCount > 0) {
+      toast({
+        title: "Patterns Saved",
+        description: `${message}. ${skippedCount} patterns skipped (only account and name patterns can be saved).`,
+      });
+    } else {
+      toast({
+        title: "Patterns Saved",
+        description: message,
+      });
+    }
 
     setSelectedPatterns(new Set());
   };
@@ -258,6 +273,7 @@ export default function PatternDiscovery() {
       case 'date': return '📅';
       case 'currency': return '💰';
       case 'address': return '📍';
+      case 'field_label': return '🏷️';
       default: return '📄';
     }
   };
@@ -270,7 +286,7 @@ export default function PatternDiscovery() {
           Pattern Discovery Tool
         </CardTitle>
         <CardDescription>
-          Upload a sample PDF to automatically discover and extract data patterns for account numbers, names, and other fields
+          Upload a sample PDF to automatically analyze and discover data patterns for account numbers, names, and other fields using advanced pattern recognition
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">

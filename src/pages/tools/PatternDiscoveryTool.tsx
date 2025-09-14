@@ -47,12 +47,12 @@ export default function PatternDiscoveryPage() {
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-lg">
               <Search className="h-5 w-5 text-green-500" />
-              AI Analysis
+              Smart Analysis
             </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
-              Our AI analyzes the document to identify account numbers, names, dates, and other patterns.
+              Advanced algorithms analyze the document to identify account numbers, names, dates, and other patterns.
             </p>
           </CardContent>
         </Card>

@@ -9,7 +9,7 @@ export interface PatternRule {
   name: string;
   regex: RegExp;
   description: string;
-  type: 'account' | 'name' | 'address' | 'date' | 'currency' | 'phone' | 'email';
+  type: 'account' | 'name' | 'address' | 'date' | 'currency' | 'phone' | 'email' | 'field_label';
   priority: number;
   validator?: (match: string) => boolean;
 }
@@ -155,26 +155,63 @@ export const PATTERN_RULES: PatternRule[] = [
     description: 'Email addresses',
     type: 'email',
     priority: 9
+  },
+
+  // Field Label Patterns (to identify and exclude from names)
+  {
+    name: 'field_labels',
+    regex: /\b(?:UTILITY BILL|SERVICE ADDRESS|ACCOUNT NUMBER|CUSTOMER NAME|BILL TO|ACCOUNT HOLDER|BILLING ADDRESS|SERVICE PERIOD|DUE DATE|AMOUNT DUE|PREVIOUS BALANCE|CURRENT CHARGES|TOTAL AMOUNT|PAYMENT DUE|METER NUMBER|RATE SCHEDULE|BILLING PERIOD|USAGE HISTORY|CONTACT INFORMATION|CUSTOMER SERVICE|ACCOUNT SUMMARY|PAYMENT OPTIONS|LATE FEES|DEPOSIT REQUIRED|SERVICE CHARGES|TAX AMOUNT|TOTAL DUE|PAST DUE|CREDIT BALANCE|WATER USAGE|SEWER CHARGES|TRASH COLLECTION|STORM WATER|BASE CHARGE|CONSUMPTION CHARGE|ENVIRONMENTAL FEE|FRANCHISE FEE|SALES TAX|NORTH MIDLAND|SOUTH MIDLAND|EAST MIDLAND|WEST MIDLAND|MIDLAND WATER|NEW WATER|WATER SYSTEMS|WATER COMPANY|WATER DEPARTMENT|CITY WATER|MUNICIPAL WATER|WATER AUTHORITY|WATER DISTRICT|WATER UTILITY)\b/gi,
+    description: 'Document field labels and headers',
+    type: 'field_label',
+    priority: 10
   }
 ];
 
 // Helper functions
 function isValidName(name: string): boolean {
   const cleaned = name.trim();
-  
+
   // Must be at least 2 characters
   if (cleaned.length < 2) return false;
-  
+
   // Should contain at least one letter
   if (!/[A-Za-z]/.test(cleaned)) return false;
-  
+
   // Should not be all numbers
   if (/^\d+$/.test(cleaned)) return false;
-  
+
   // Should not contain too many special characters
   const specialChars = cleaned.match(/[^A-Za-z\s&'.-]/g);
   if (specialChars && specialChars.length > 2) return false;
-  
+
+  // Additional validation for names vs field labels
+  const upperName = cleaned.toUpperCase();
+
+  // Reject if it contains common field indicators
+  const fieldIndicators = [
+    'BILL', 'ACCOUNT', 'NUMBER', 'ADDRESS', 'SERVICE', 'UTILITY', 'WATER', 'COMPANY',
+    'DEPARTMENT', 'AUTHORITY', 'DISTRICT', 'MUNICIPAL', 'CITY', 'SYSTEMS', 'CHARGES',
+    'AMOUNT', 'DUE', 'BALANCE', 'PAYMENT', 'PERIOD', 'DATE', 'USAGE', 'METER',
+    'RATE', 'SCHEDULE', 'HISTORY', 'INFORMATION', 'CONTACT', 'CUSTOMER', 'HOLDER',
+    'MIDLAND', 'NORTH', 'SOUTH', 'EAST', 'WEST', 'NEW'
+  ];
+
+  // If the name contains any field indicators, it's likely not a person's name
+  if (fieldIndicators.some(indicator => upperName.includes(indicator))) {
+    return false;
+  }
+
+  // Names should typically be 2-4 words max
+  const words = cleaned.split(/\s+/);
+  if (words.length > 4) return false;
+
+  // Each word should start with a capital letter for proper names
+  const hasProperCapitalization = words.every(word =>
+    /^[A-Z]/.test(word) || word === '&' || word.length <= 2
+  );
+
+  if (!hasProperCapitalization) return false;
+
   return true;
 }
 
@@ -186,8 +223,27 @@ function isCommonWord(text: string): boolean {
     'USE', 'HER', 'WAY', 'MAY', 'SAY', 'SHE', 'NEW', 'TRY', 'MAN', 'DAY', 'GET', 'USE', 'MAN',
     'NEW', 'NOW', 'WAY', 'MAY', 'SAY'
   ];
-  
-  return commonWords.includes(text.toUpperCase().replace(/\s+/g, ' ').trim());
+
+  // Field labels and common document terms that are NOT names
+  const fieldLabels = [
+    'UTILITY BILL', 'SERVICE ADDRESS', 'ACCOUNT NUMBER', 'CUSTOMER NAME', 'BILL TO',
+    'ACCOUNT HOLDER', 'BILLING ADDRESS', 'SERVICE PERIOD', 'DUE DATE', 'AMOUNT DUE',
+    'PREVIOUS BALANCE', 'CURRENT CHARGES', 'TOTAL AMOUNT', 'PAYMENT DUE', 'METER NUMBER',
+    'RATE SCHEDULE', 'BILLING PERIOD', 'USAGE HISTORY', 'CONTACT INFORMATION',
+    'CUSTOMER SERVICE', 'ACCOUNT SUMMARY', 'PAYMENT OPTIONS', 'LATE FEES', 'DEPOSIT REQUIRED',
+    'SERVICE CHARGES', 'TAX AMOUNT', 'TOTAL DUE', 'PAST DUE', 'CREDIT BALANCE',
+    'WATER USAGE', 'SEWER CHARGES', 'TRASH COLLECTION', 'STORM WATER', 'BASE CHARGE',
+    'CONSUMPTION CHARGE', 'ENVIRONMENTAL FEE', 'FRANCHISE FEE', 'SALES TAX',
+    'NORTH MIDLAND', 'SOUTH MIDLAND', 'EAST MIDLAND', 'WEST MIDLAND', 'MIDLAND WATER',
+    'NEW WATER', 'WATER SYSTEMS', 'WATER COMPANY', 'WATER DEPARTMENT', 'CITY WATER',
+    'MUNICIPAL WATER', 'WATER AUTHORITY', 'WATER DISTRICT', 'WATER UTILITY'
+  ];
+
+  const normalizedText = text.toUpperCase().replace(/\s+/g, ' ').trim();
+
+  return commonWords.includes(normalizedText) ||
+         fieldLabels.includes(normalizedText) ||
+         fieldLabels.some(label => normalizedText.includes(label));
 }
 
 function isCommonNumber(num: string): boolean {
