@@ -24,7 +24,14 @@ export const getEmailConfig = (): EmailConfig => {
   try {
     const stored = localStorage.getItem(CONFIG_STORAGE_KEY);
     if (stored) {
-      return JSON.parse(stored);
+      const config = JSON.parse(stored);
+      // Force update if old sandbox domain is found
+      if (config.mailgunDomain && config.mailgunDomain.includes('sandbox19b0314ebe094b82a4a625dbce7e1425')) {
+        console.log('Clearing old sandbox configuration...');
+        localStorage.removeItem(CONFIG_STORAGE_KEY);
+        return DEFAULT_CONFIG;
+      }
+      return config;
     }
   } catch (error) {
     console.warn('Failed to load email config from localStorage:', error);
@@ -56,6 +63,25 @@ export const isConfigValid = (config: EmailConfig): boolean => {
     config.mailgunDomain !== 'mg.yourdomain.com' &&
     config.mailgunApiKey !== 'key-your-api-key-here' &&
     config.mailgunDomain.length > 0 &&
-    config.mailgunApiKey.length > 0
+    config.mailgunApiKey.length > 0 &&
+    !config.mailgunDomain.includes('sandbox19b0314ebe094b82a4a625dbce7e1425')
   );
+};
+
+// Force update to new domain configuration
+export const forceUpdateToNewDomain = (): void => {
+  try {
+    console.log('Forcing update to newwaterbill.com domain...');
+    localStorage.removeItem(CONFIG_STORAGE_KEY);
+    // Save the new configuration
+    const newConfig: EmailConfig = {
+      mailgunDomain: 'newwaterbill.com',
+      mailgunApiKey: EMAIL_CREDENTIALS.MAILGUN_API_KEY,
+      fromEmail: 'statements@newwaterbill.com',
+      fromName: 'New Water Bill'
+    };
+    saveEmailConfig(newConfig);
+  } catch (error) {
+    console.warn('Failed to force update configuration:', error);
+  }
 };
