@@ -117,3 +117,6 @@ $RECYCLE.BIN/
 # Bun
 bun.lockb
 node_modules
+
+# Local Netlify folder
+.netlify
