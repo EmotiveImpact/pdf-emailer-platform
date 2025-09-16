@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Send, CheckCircle, AlertCircle, Clock, Mail, Settings, Calendar } from 'lucide-react';
+import { Send, CheckCircle, AlertCircle, Clock, Mail, Settings, Calendar, TestTube } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -62,8 +62,10 @@ const EmailSendingComponent: React.FC<EmailSendingComponentProps> = ({
   const [emailResults, setEmailResults] = useState<EmailResult[]>([]);
   const [showConfig, setShowConfig] = useState(true);
   const [scheduledFor, setScheduledFor] = useState<Date | null>(null);
-  const [activeTab, setActiveTab] = useState('send');
+  const [activeTab, setActiveTab] = useState('test');
   const [configValid, setConfigValid] = useState(false);
+  const [testEmail, setTestEmail] = useState('');
+  const [isTestSending, setIsTestSending] = useState(false);
   const { toast } = useToast();
 
   // Load configuration on component mount
@@ -160,6 +162,89 @@ const EmailSendingComponent: React.FC<EmailSendingComponentProps> = ({
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error'
       };
+    }
+  };
+
+  const sendTestEmail = async () => {
+    if (!testEmail || !testEmail.includes('@')) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid test email address",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!mailgunDomain || !mailgunApiKey) {
+      toast({
+        title: "Configuration Required",
+        description: "Please provide Mailgun domain and API key",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (matchedFiles.length === 0) {
+      toast({
+        title: "No Data Available",
+        description: "Please complete the previous steps to have sample data for testing",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsTestSending(true);
+
+    try {
+      // Use the first matched file as sample data for the test
+      const sampleData = matchedFiles[0];
+      const { subject, body } = processTemplate(emailTemplate, sampleData);
+
+      // Create FormData for Mailgun API
+      const formData = new FormData();
+      formData.append('from', `${fromName} <${fromEmail}>`);
+      formData.append('to', testEmail);
+      formData.append('subject', `[TEST] ${subject}`);
+      formData.append('html', `
+        <div style="background-color: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
+          <h3 style="color: #856404; margin: 0 0 10px 0;">🧪 TEST EMAIL</h3>
+          <p style="color: #856404; margin: 0; font-size: 14px;">
+            This is a test email to preview the format and content.
+            The actual emails sent to customers will not include this notice.
+          </p>
+        </div>
+        ${body}
+      `);
+
+      // Attach the sample PDF
+      formData.append('attachment', sampleData.pdf.blob, sampleData.pdf.name);
+
+      const response = await fetch(`https://api.mailgun.net/v3/${mailgunDomain}/messages`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Basic ${btoa(`api:${mailgunApiKey}`)}`
+        },
+        body: formData
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `HTTP ${response.status}`);
+      }
+
+      toast({
+        title: "Test Email Sent!",
+        description: `Test email sent successfully to ${testEmail}`,
+      });
+
+    } catch (error) {
+      toast({
+        title: "Test Email Failed",
+        description: error instanceof Error ? error.message : 'Unknown error occurred',
+        variant: "destructive",
+      });
+    } finally {
+      setIsTestSending(false);
     }
   };
 
@@ -263,7 +348,11 @@ const EmailSendingComponent: React.FC<EmailSendingComponentProps> = ({
         </CardHeader>
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="test" className="flex items-center gap-2">
+                <TestTube className="h-4 w-4" />
+                Test Email
+              </TabsTrigger>
               <TabsTrigger value="send" className="flex items-center gap-2">
                 <Send className="h-4 w-4" />
                 Send Emails
@@ -277,6 +366,85 @@ const EmailSendingComponent: React.FC<EmailSendingComponentProps> = ({
                 Configuration
               </TabsTrigger>
             </TabsList>
+
+            {/* Test Email Tab */}
+            <TabsContent value="test" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <TestTube className="h-5 w-5" />
+                    Test Email Preview
+                  </CardTitle>
+                  <CardDescription>
+                    Send a test email to preview the format and content before sending to all customers.
+                    The test will use sample data from your first matched customer.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {matchedFiles.length > 0 ? (
+                    <>
+                      <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                        <h4 className="font-medium text-blue-900 mb-2">Sample Data Preview:</h4>
+                        <div className="text-sm text-blue-800 space-y-1">
+                          <p><strong>Customer:</strong> {cleanCustomerName(matchedFiles[0].customer.customerName)}</p>
+                          <p><strong>Account:</strong> {matchedFiles[0].customer.accountNumber}</p>
+                          <p><strong>PDF:</strong> {matchedFiles[0].pdf.name}</p>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="testEmail">Test Email Address</Label>
+                        <Input
+                          id="testEmail"
+                          type="email"
+                          placeholder="your-email@example.com"
+                          value={testEmail}
+                          onChange={(e) => setTestEmail(e.target.value)}
+                        />
+                        <p className="text-sm text-muted-foreground">
+                          Enter your email address to receive a test email with the sample data above.
+                        </p>
+                      </div>
+
+                      <Button
+                        onClick={sendTestEmail}
+                        disabled={isTestSending || !testEmail || !mailgunDomain || !mailgunApiKey}
+                        className="w-full"
+                        size="lg"
+                      >
+                        {isTestSending ? (
+                          <>
+                            <Clock className="h-4 w-4 mr-2 animate-pulse" />
+                            Sending Test Email...
+                          </>
+                        ) : (
+                          <>
+                            <TestTube className="h-4 w-4 mr-2" />
+                            Send Test Email
+                          </>
+                        )}
+                      </Button>
+
+                      <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                        <p className="text-sm text-amber-800">
+                          <strong>Note:</strong> The test email will include a clear "TEST EMAIL" banner
+                          and use the subject prefix "[TEST]" to distinguish it from actual customer emails.
+                        </p>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="text-center py-8">
+                      <TestTube className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                      <h3 className="text-lg font-medium text-muted-foreground mb-2">No Sample Data Available</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Complete the previous steps (upload files, import customers, match data)
+                        to enable test email functionality.
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
 
             {/* Send Emails Tab */}
             <TabsContent value="send" className="space-y-6">
