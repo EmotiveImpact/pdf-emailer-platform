@@ -1,5 +1,5 @@
 import React from 'react';
-import { FileText, Mail, ArrowRight, Clock, CheckCircle, Users, Building2, Sparkles, Edit3 } from 'lucide-react';
+import { FileText, Mail, ArrowRight, Clock, CheckCircle, Users, Building2, Sparkles, Edit3, Settings } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -70,6 +70,22 @@ const Dashboard = () => {
       ],
       lastUsed: 'Never',
       totalProcessed: 'Ready to use'
+    },
+    {
+      id: 'email-settings',
+      title: 'Email Settings',
+      description: 'Configure email sender information and Mailgun settings for email distribution',
+      icon: Settings,
+      path: '/tools/email-settings',
+      status: 'active',
+      features: [
+        'Sender configuration',
+        'Mailgun integration',
+        'Settings validation',
+        'Configuration preview'
+      ],
+      lastUsed: 'Never',
+      totalProcessed: 'Configuration required'
     }
   ];
 

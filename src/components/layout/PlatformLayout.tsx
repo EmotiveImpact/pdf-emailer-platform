@@ -34,6 +34,12 @@ const PlatformLayout: React.FC<PlatformLayoutProps> = ({ children }) => {
       label: 'Template Manager',
       icon: Edit3,
       description: 'Create and edit email templates'
+    },
+    {
+      path: '/tools/email-settings',
+      label: 'Email Settings',
+      icon: Settings,
+      description: 'Configure email sender and Mailgun settings'
     }
   ];
 

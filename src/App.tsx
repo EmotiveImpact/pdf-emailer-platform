@@ -10,6 +10,7 @@ import PDFSplitterTool from "./pages/tools/PDFSplitterTool";
 import EmailDistributionTool from "./pages/tools/EmailDistributionTool";
 import PatternDiscoveryPage from "./pages/tools/PatternDiscoveryTool";
 import TemplateManager from "./pages/tools/TemplateManager";
+import EmailSettings from "./pages/tools/EmailSettings";
 import NotFound from "./pages/NotFound";
 import { forceUpdateToNewDomain } from "./lib/emailConfig";
 
@@ -34,6 +35,7 @@ const App = () => {
               <Route path="/tools/email-distribution" element={<EmailDistributionTool />} />
               <Route path="/tools/pattern-discovery" element={<PatternDiscoveryPage />} />
               <Route path="/tools/template-manager" element={<TemplateManager />} />
+              <Route path="/tools/email-settings" element={<EmailSettings />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
