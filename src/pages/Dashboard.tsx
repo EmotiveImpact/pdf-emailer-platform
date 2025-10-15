@@ -1,5 +1,5 @@
 import React from 'react';
-import { FileText, Mail, ArrowRight, Clock, CheckCircle, Users, Building2, Sparkles } from 'lucide-react';
+import { FileText, Mail, ArrowRight, Clock, CheckCircle, Users, Building2, Sparkles, Edit3 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -54,6 +54,22 @@ const Dashboard = () => {
       ],
       lastUsed: 'Never',
       totalProcessed: 'New tool'
+    },
+    {
+      id: 'template-manager',
+      title: 'Template Manager',
+      description: 'Create, edit, and manage email templates with rich formatting',
+      icon: Edit3,
+      path: '/tools/template-manager',
+      status: 'active',
+      features: [
+        'Rich text editor',
+        'Template library',
+        'Default template settings',
+        'Variable insertion'
+      ],
+      lastUsed: 'Never',
+      totalProcessed: 'Ready to use'
     }
   ];
 

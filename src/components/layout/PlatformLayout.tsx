@@ -1,5 +1,5 @@
 import React from 'react';
-import { Building2, FileText, Mail, Home, Settings } from 'lucide-react';
+import { Building2, FileText, Mail, Home, Settings, Edit3 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 
@@ -28,6 +28,12 @@ const PlatformLayout: React.FC<PlatformLayoutProps> = ({ children }) => {
       label: 'Email Distribution',
       icon: Mail,
       description: 'Send personalized emails with attachments'
+    },
+    {
+      path: '/tools/template-manager',
+      label: 'Template Manager',
+      icon: Edit3,
+      description: 'Create and edit email templates'
     }
   ];
 

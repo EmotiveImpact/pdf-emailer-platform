@@ -56,6 +56,20 @@ New Water Systems Team</p>`);
   const [activeTab, setActiveTab] = useState('editor');
   const { toast } = useToast();
 
+  // Load default template from localStorage on component mount
+  React.useEffect(() => {
+    try {
+      const defaultTemplate = localStorage.getItem('defaultEmailTemplate');
+      if (defaultTemplate) {
+        const parsed = JSON.parse(defaultTemplate);
+        setSubject(parsed.subject);
+        setEmailBody(parsed.content);
+      }
+    } catch (error) {
+      console.error('Error loading default template:', error);
+    }
+  }, []);
+
   const availableVariables = [
     { name: '{{customerName}}', description: 'Customer\'s full name', icon: User },
     { name: '{{accountNumber}}', description: 'Account number', icon: FileText },
