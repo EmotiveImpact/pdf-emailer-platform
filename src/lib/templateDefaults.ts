@@ -3,16 +3,16 @@
 
 export const DEFAULT_EMAIL_TEMPLATE = {
   subject: 'Your New Water Systems Statement',
-  content: `<p>Dear {{customerName}},</p>
-
-<p>Please find attached your {{currentMonth}} statement for account {{accountNumber}}.</p>
-
-<p>Pay your New Water Systems bill now at:<br>
-<a href="http://www.newwaterbill.com/">http://www.newwaterbill.com/</a></p>
-
-<p>Thank you,<br>
-New Water Systems, Inc.</p>`,
-  version: '2.0' // Increment this when you want to force update all users
+  content: `Dear {{customerName}},<br>
+<br>
+Please find attached your {{currentMonth}} statement for account {{accountNumber}}.<br>
+<br>
+Pay your New Water Systems bill now at:<br>
+http://www.newwaterbill.com/<br>
+<br>
+Thank you,<br>
+New Water Systems, Inc.`,
+  version: '2.1' // Increment this when you want to force update all users
 };
 
 // Check if template needs updating and update if necessary

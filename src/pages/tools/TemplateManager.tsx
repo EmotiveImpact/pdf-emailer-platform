@@ -24,15 +24,15 @@ interface EmailTemplate {
 
 const TemplateManager: React.FC = () => {
   const [subject, setSubject] = useState('Your New Water Systems Statement');
-  const [emailBody, setEmailBody] = useState(`<p>Dear {{customerName}},</p>
-
-<p>Please find attached your {{currentMonth}} statement for account {{accountNumber}}.</p>
-
-<p>Pay your New Water Systems bill now at:<br>
-<a href="http://www.newwaterbill.com/">http://www.newwaterbill.com/</a></p>
-
-<p>Thank you,<br>
-New Water Systems, Inc.</p>`);
+  const [emailBody, setEmailBody] = useState(`Dear {{customerName}},<br>
+<br>
+Please find attached your {{currentMonth}} statement for account {{accountNumber}}.<br>
+<br>
+Pay your New Water Systems bill now at:<br>
+http://www.newwaterbill.com/<br>
+<br>
+Thank you,<br>
+New Water Systems, Inc.`);
   const [activeTab, setActiveTab] = useState('editor');
   const [templates, setTemplates] = useState<EmailTemplate[]>([]);
   const [editingTemplate, setEditingTemplate] = useState<EmailTemplate | null>(null);
@@ -78,15 +78,16 @@ New Water Systems, Inc.</p>`);
         // If no default template exists, save the current one as default
         const newDefaultTemplate = {
           subject: 'Your New Water Systems Statement',
-          content: `<p>Dear {{customerName}},</p>
-
-<p>Please find attached your {{currentMonth}} statement for account {{accountNumber}}.</p>
-
-<p>Pay your New Water Systems bill now at:<br>
-<a href="http://www.newwaterbill.com/">http://www.newwaterbill.com/</a></p>
-
-<p>Thank you,<br>
-New Water Systems, Inc.</p>`,
+          content: `Dear {{customerName}},<br>
+<br>
+Please find attached your {{currentMonth}} statement for account {{accountNumber}}.<br>
+<br>
+Pay your New Water Systems bill now at:<br>
+http://www.newwaterbill.com/<br>
+<br>
+Thank you,<br>
+New Water Systems, Inc.`,
+          version: '2.1',
           updatedAt: new Date().toISOString()
         };
         localStorage.setItem('defaultEmailTemplate', JSON.stringify(newDefaultTemplate));
