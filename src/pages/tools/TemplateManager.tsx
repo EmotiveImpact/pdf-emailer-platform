@@ -124,6 +124,7 @@ New Water Systems, Inc.`,
     return template
       .replace(/\{\{customerName\}\}/g, sampleData.customerName)
       .replace(/\{\{accountNumber\}\}/g, sampleData.accountNumber)
+      .replace(/\{\{currentMonth\}\}/g, sampleData.currentMonth)
       .replace(/\{\{currentDate\}\}/g, sampleData.currentDate)
       .replace(/\{\{companyName\}\}/g, sampleData.companyName)
       .replace(/\{\{supportEmail\}\}/g, sampleData.supportEmail);

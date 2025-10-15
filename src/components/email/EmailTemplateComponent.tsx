@@ -126,9 +126,11 @@ New Water Systems, Inc.`,
 
   const processTemplate = (template: string, data: MatchedData): string => {
     const cleanName = cleanCustomerName(data.customer.customerName);
+    const currentMonth = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
     return template
       .replace(/\{\{customerName\}\}/g, cleanName)
       .replace(/\{\{accountNumber\}\}/g, data.customer.accountNumber)
+      .replace(/\{\{currentMonth\}\}/g, currentMonth)
       .replace(/\{\{currentDate\}\}/g, new Date().toLocaleDateString())
       .replace(/\{\{companyName\}\}/g, 'New Water Systems')
       .replace(/\{\{supportEmail\}\}/g, 'support@newwatersystems.com');
@@ -176,16 +178,15 @@ New Water Systems, Inc.`,
 
   const loadDefaultTemplate = () => {
     setSubject('Your New Water Systems Statement');
-    setEmailBody(`<p>Dear {{customerName}},</p>
-
-<p>Please find attached your New Water Systems statement for account <strong>{{accountNumber}}</strong>.</p>
-
-<p>If you have any questions about your statement, please don't hesitate to contact us.</p>
-
-<p>Thank you for choosing New Water Systems.</p>
-
-<p>Best regards,<br>
-New Water Systems Team</p>`);
+    setEmailBody(`Dear {{customerName}},<br>
+<br>
+Please find attached your {{currentMonth}} statement for account {{accountNumber}}.<br>
+<br>
+Pay your New Water Systems bill now at:<br>
+http://www.newwaterbill.com/<br>
+<br>
+Thank you,<br>
+New Water Systems, Inc.`);
   };
 
   const handleTemplateSelect = (template: any) => {
