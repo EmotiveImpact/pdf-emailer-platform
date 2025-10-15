@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, ArrowLeft, Upload, FileText, Users, Send, CheckCircle, AlertCircle } from 'lucide-react';
+import { Mail, ArrowLeft, Upload, FileText, Users, Send, CheckCircle, AlertCircle, Settings } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,6 +9,7 @@ import ZipUploadComponent from '@/components/email/ZipUploadComponent';
 import CsvUploadComponent from '@/components/email/CsvUploadComponent';
 import AccountMatchingComponent from '@/components/email/AccountMatchingComponent';
 import EmailTemplateComponent from '@/components/email/EmailTemplateComponent';
+import EmailSettingsComponent from '@/components/email/EmailSettingsComponent';
 import EmailSendingComponent from '@/components/email/EmailSendingComponent';
 
 interface PDFFile {
@@ -30,7 +31,7 @@ interface MatchedData {
   matched: boolean;
 }
 
-type WorkflowStep = 'upload-zip' | 'upload-csv' | 'match-data' | 'email-template' | 'send-emails';
+type WorkflowStep = 'upload-zip' | 'upload-csv' | 'match-data' | 'email-template' | 'email-settings' | 'send-emails';
 
 const EmailDistributionTool = () => {
   const [currentStep, setCurrentStep] = useState<WorkflowStep>('upload-zip');
@@ -38,6 +39,7 @@ const EmailDistributionTool = () => {
   const [customerData, setCustomerData] = useState<CustomerData[]>([]);
   const [matchedData, setMatchedData] = useState<MatchedData[]>([]);
   const [emailTemplate, setEmailTemplate] = useState('');
+  const [emailSettingsConfirmed, setEmailSettingsConfirmed] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
 
@@ -46,6 +48,7 @@ const EmailDistributionTool = () => {
     { id: 'upload-csv', title: 'Import Customer Data', icon: FileText, description: 'Upload CSV with customer emails and account numbers' },
     { id: 'match-data', title: 'Match & Verify', icon: Users, description: 'Match PDFs to customers by account number' },
     { id: 'email-template', title: 'Email Template', icon: Mail, description: 'Create personalized email template' },
+    { id: 'email-settings', title: 'Email Settings', icon: Settings, description: 'Configure email settings and sender information' },
     { id: 'send-emails', title: 'Send Emails', icon: Send, description: 'Send emails with PDF attachments' }
   ];
 
@@ -64,7 +67,8 @@ const EmailDistributionTool = () => {
       case 'upload-csv': return pdfFiles.length > 0;
       case 'match-data': return pdfFiles.length > 0 && customerData.length > 0;
       case 'email-template': return matchedData.length > 0;
-      case 'send-emails': return matchedData.length > 0 && emailTemplate.trim() !== '';
+      case 'email-settings': return matchedData.length > 0 && emailTemplate.trim() !== '';
+      case 'send-emails': return matchedData.length > 0 && emailTemplate.trim() !== '' && emailSettingsConfirmed;
       default: return true;
     }
   };
@@ -130,7 +134,7 @@ const EmailDistributionTool = () => {
           </div>
 
           {/* Enhanced Step Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
             {steps.map((step, index) => {
               const Icon = step.icon;
               const status = getStepStatus(step.id as WorkflowStep);
@@ -312,10 +316,21 @@ const EmailDistributionTool = () => {
             onTemplateReady={(template) => {
               setEmailTemplate(template);
               if (template.trim() !== '') {
-                setCurrentStep('send-emails');
+                setCurrentStep('email-settings');
               }
             }}
             isProcessing={isProcessing}
+          />
+        )}
+
+        {currentStep === 'email-settings' && (
+          <EmailSettingsComponent
+            onSettingsConfirmed={() => {
+              setEmailSettingsConfirmed(true);
+              setCurrentStep('send-emails');
+            }}
+            isProcessing={isProcessing}
+            recipientCount={matchedData.length}
           />
         )}
 
