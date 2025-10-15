@@ -13,6 +13,7 @@ import TemplateManager from "./pages/tools/TemplateManager";
 import EmailSettings from "./pages/tools/EmailSettings";
 import NotFound from "./pages/NotFound";
 import { forceUpdateToNewDomain } from "./lib/emailConfig";
+import { ensureDefaultTemplate } from "./lib/templateDefaults";
 
 const queryClient = new QueryClient();
 
@@ -20,6 +21,8 @@ const App = () => {
   useEffect(() => {
     // Force update to new domain configuration on app load
     forceUpdateToNewDomain();
+    // Ensure default email template is set
+    ensureDefaultTemplate();
   }, []);
 
   return (

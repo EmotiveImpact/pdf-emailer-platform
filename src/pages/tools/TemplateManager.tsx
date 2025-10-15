@@ -74,6 +74,22 @@ New Water Systems, Inc.</p>`);
         const parsed = JSON.parse(defaultTemplate);
         setSubject(parsed.subject);
         setEmailBody(parsed.content);
+      } else {
+        // If no default template exists, save the current one as default
+        const newDefaultTemplate = {
+          subject: 'Your New Water Systems Statement',
+          content: `<p>Dear {{customerName}},</p>
+
+<p>Please find attached your {{currentMonth}} statement for account {{accountNumber}}.</p>
+
+<p>Pay your New Water Systems bill now at:<br>
+<a href="http://www.newwaterbill.com/">http://www.newwaterbill.com/</a></p>
+
+<p>Thank you,<br>
+New Water Systems, Inc.</p>`,
+          updatedAt: new Date().toISOString()
+        };
+        localStorage.setItem('defaultEmailTemplate', JSON.stringify(newDefaultTemplate));
       }
     } catch (error) {
       console.error('Error loading default template:', error);
