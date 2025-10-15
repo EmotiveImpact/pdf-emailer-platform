@@ -43,14 +43,13 @@ const EmailTemplateComponent: React.FC<EmailTemplateComponentProps> = ({
   const [subject, setSubject] = useState('Your New Water Systems Statement');
   const [emailBody, setEmailBody] = useState(`<p>Dear {{customerName}},</p>
 
-<p>Please find attached your New Water Systems statement for account <strong>{{accountNumber}}</strong>.</p>
+<p>Please find attached your {{currentMonth}} statement for account {{accountNumber}}.</p>
 
-<p>If you have any questions about your statement, please don't hesitate to contact us.</p>
+<p>Pay your New Water Systems bill now at:<br>
+<a href="http://www.newwaterbill.com/">http://www.newwaterbill.com/</a></p>
 
-<p>Thank you for choosing New Water Systems.</p>
-
-<p>Best regards,<br>
-New Water Systems Team</p>`);
+<p>Thank you,<br>
+New Water Systems, Inc.</p>`);
   const [previewData, setPreviewData] = useState<MatchedData | null>(null);
   const [showPreview, setShowPreview] = useState(false);
   const [activeTab, setActiveTab] = useState('editor');
@@ -73,6 +72,7 @@ New Water Systems Team</p>`);
   const availableVariables = [
     { name: '{{customerName}}', description: 'Customer\'s full name', icon: User },
     { name: '{{accountNumber}}', description: 'Account number', icon: FileText },
+    { name: '{{currentMonth}}', description: 'Current month and year (e.g., October 2025)', icon: Calendar },
     { name: '{{currentDate}}', description: 'Current date', icon: Calendar },
     { name: '{{companyName}}', description: 'Company name', icon: FileText },
     { name: '{{supportEmail}}', description: 'Support email address', icon: Mail }

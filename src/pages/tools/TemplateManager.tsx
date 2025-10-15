@@ -26,14 +26,13 @@ const TemplateManager: React.FC = () => {
   const [subject, setSubject] = useState('Your New Water Systems Statement');
   const [emailBody, setEmailBody] = useState(`<p>Dear {{customerName}},</p>
 
-<p>Please find attached your New Water Systems statement for account <strong>{{accountNumber}}</strong>.</p>
+<p>Please find attached your {{currentMonth}} statement for account {{accountNumber}}.</p>
 
-<p>If you have any questions about your statement, please don't hesitate to contact us.</p>
+<p>Pay your New Water Systems bill now at:<br>
+<a href="http://www.newwaterbill.com/">http://www.newwaterbill.com/</a></p>
 
-<p>Thank you for choosing New Water Systems.</p>
-
-<p>Best regards,<br>
-New Water Systems Team</p>`);
+<p>Thank you,<br>
+New Water Systems, Inc.</p>`);
   const [activeTab, setActiveTab] = useState('editor');
   const [templates, setTemplates] = useState<EmailTemplate[]>([]);
   const [editingTemplate, setEditingTemplate] = useState<EmailTemplate | null>(null);
@@ -44,6 +43,7 @@ New Water Systems Team</p>`);
   const sampleData = {
     customerName: 'John Smith',
     accountNumber: 'NWS-12345',
+    currentMonth: new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
     currentDate: new Date().toLocaleDateString(),
     companyName: 'New Water Systems',
     supportEmail: 'support@newwatersystems.com'

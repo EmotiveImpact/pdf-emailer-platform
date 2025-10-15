@@ -112,14 +112,19 @@ const EmailSendingComponent: React.FC<EmailSendingComponentProps> = ({
 
     const cleanName = cleanCustomerName(data.customer.customerName);
 
+    // Get current month and year (e.g., "October 2025")
+    const currentMonth = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
     const processedSubject = subject
       .replace(/\{\{customerName\}\}/g, cleanName)
       .replace(/\{\{accountNumber\}\}/g, data.customer.accountNumber)
+      .replace(/\{\{currentMonth\}\}/g, currentMonth)
       .replace(/\{\{currentDate\}\}/g, new Date().toLocaleDateString());
 
     const processedBody = body
       .replace(/\{\{customerName\}\}/g, cleanName)
       .replace(/\{\{accountNumber\}\}/g, data.customer.accountNumber)
+      .replace(/\{\{currentMonth\}\}/g, currentMonth)
       .replace(/\{\{currentDate\}\}/g, new Date().toLocaleDateString());
 
     return { subject: processedSubject, body: processedBody };
