@@ -77,8 +77,8 @@ export const forceUpdateToNewDomain = (): void => {
     const newConfig: EmailConfig = {
       mailgunDomain: 'newwaterbill.com',
       mailgunApiKey: EMAIL_CREDENTIALS.MAILGUN_API_KEY,
-      fromEmail: 'statements@newwaterbill.com',
-      fromName: 'New Water Bill'
+      fromEmail: 'statement@newwaterbills.com',
+      fromName: 'New Water Systems, Inc.'
     };
     saveEmailConfig(newConfig);
   } catch (error) {

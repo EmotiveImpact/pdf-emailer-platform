@@ -193,7 +193,7 @@ const EmailSettings: React.FC = () => {
                 type="email"
                 value={config.fromEmail}
                 onChange={(e) => handleConfigChange('fromEmail', e.target.value)}
-                placeholder="e.g., statements@newwaterbill.com"
+                placeholder="e.g., statement@newwaterbills.com"
               />
               <div className="text-xs text-gray-500">
                 The email address that emails will be sent from

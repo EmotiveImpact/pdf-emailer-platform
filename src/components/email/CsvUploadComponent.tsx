@@ -113,34 +113,22 @@ const CsvUploadComponent: React.FC<CsvUploadComponentProps> = ({ onDataParsed, i
           const availableColumns = Object.keys(firstRow);
           console.log('Available columns:', availableColumns);
 
-          // More flexible column detection using the same logic as data extraction
-          const hasAccountNumber = availableColumns.some(col =>
-            col.toLowerCase().includes('account') && col.toLowerCase().includes('number')
-          ) || availableColumns.some(col =>
-            ['accountnumber', 'account_number', 'accountno'].includes(col.toLowerCase().replace(/\s/g, ''))
-          );
-
-          const hasEmail = availableColumns.some(col =>
-            col.toLowerCase().includes('email') || col.toLowerCase().includes('mail')
-          );
-
-          const hasCustomerName = availableColumns.some(col =>
-            (col.toLowerCase().includes('customer') && col.toLowerCase().includes('name')) ||
-            col.toLowerCase().includes('name')
-          );
+          const hasAccountNumber = firstRow && ('accountNumber' in firstRow || 'account_number' in firstRow || 'Account Number' in firstRow);
+          const hasEmail = firstRow && ('email' in firstRow || 'Email' in firstRow || 'email_address' in firstRow);
+          const hasCustomerName = firstRow && ('customerName' in firstRow || 'customer_name' in firstRow || 'Customer Name' in firstRow || 'name' in firstRow || 'Name' in firstRow);
 
           console.log('Column detection:', {
             hasAccountNumber,
             hasEmail,
             hasCustomerName,
-            accountNumberCol: availableColumns.find(col =>
-              col.toLowerCase().includes('account')
+            accountNumberCol: availableColumns.find(col => 
+              col.toLowerCase().includes('account') || col.toLowerCase().includes('number')
             ),
-            emailCol: availableColumns.find(col =>
+            emailCol: availableColumns.find(col => 
               col.toLowerCase().includes('email') || col.toLowerCase().includes('mail')
             ),
-            nameCol: availableColumns.find(col =>
-              col.toLowerCase().includes('name')
+            nameCol: availableColumns.find(col => 
+              col.toLowerCase().includes('name') || col.toLowerCase().includes('customer')
             )
           });
 
