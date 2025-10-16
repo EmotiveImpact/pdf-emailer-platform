@@ -176,7 +176,7 @@ const EmailSettingsComponent: React.FC<EmailSettingsComponentProps> = ({
                 type="email"
                 value={config.fromEmail}
                 onChange={(e) => handleConfigChange('fromEmail', e.target.value)}
-                placeholder="e.g., statement@newwaterbills.com"
+                placeholder="e.g., statement@newwaterbill.com"
               />
             </div>
           </div>

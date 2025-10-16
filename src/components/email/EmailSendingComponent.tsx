@@ -54,7 +54,7 @@ const EmailSendingComponent: React.FC<EmailSendingComponentProps> = ({
   // Load configuration from storage on component mount
   const [mailgunDomain, setMailgunDomain] = useState('');
   const [mailgunApiKey, setMailgunApiKey] = useState('');
-  const [fromEmail, setFromEmail] = useState('statement@newwaterbills.com');
+  const [fromEmail, setFromEmail] = useState('statement@newwaterbill.com');
   const [fromName, setFromName] = useState('New Water Systems, Inc.');
   const [isSending, setIsSending] = useState(false);
   const [sendingProgress, setSendingProgress] = useState(0);

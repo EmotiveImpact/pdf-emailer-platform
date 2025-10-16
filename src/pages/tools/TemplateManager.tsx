@@ -338,7 +338,7 @@ New Water Systems Team</p>`);
                 <div className="bg-white p-6 rounded border shadow-sm">
                   <div className="border-b pb-4 mb-4">
                     <div className="text-sm text-gray-600">
-                      <strong>From:</strong> New Water Systems, Inc. &lt;statement@newwaterbills.com&gt;
+                      <strong>From:</strong> New Water Systems, Inc. &lt;statement@newwaterbill.com&gt;
                     </div>
                     <div className="text-sm text-gray-600">
                       <strong>To:</strong> {sampleData.customerName} &lt;customer@example.com&gt;
